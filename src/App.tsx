@@ -4,8 +4,10 @@ import World from "./World";
 
 const App: React.FC = () => {
   return (
-    <div className="App">
-      <World />
+    <div className="container">
+      <main className="App">
+        <World />
+      </main>
     </div>
   );
 };

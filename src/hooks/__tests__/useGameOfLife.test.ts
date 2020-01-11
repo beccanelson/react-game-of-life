@@ -27,9 +27,9 @@ describe("useGameOfLife", () => {
         result.current.setLivingAt({ x: 1, y: 1 });
       });
 
-      expect(result.current.isAliveInNextGeneration({ x: 1, y: 1 })).toBe(
-        false
-      );
+      expect(
+        result.current.isAliveInNextGeneration({ x: 1, y: 1, living: true })
+      ).toBe(false);
     });
 
     test("a cell with two or three live neighbors lives to the next generation", () => {
@@ -45,13 +45,17 @@ describe("useGameOfLife", () => {
         result.current.setLivingAt({ x: 2, y: 2 });
       });
 
-      expect(result.current.isAliveInNextGeneration({ x: 1, y: 1 })).toBe(true);
+      expect(
+        result.current.isAliveInNextGeneration({ x: 1, y: 1, living: true })
+      ).toBe(true);
 
       act(() => {
         result.current.setLivingAt({ x: 2, y: 1 });
       });
 
-      expect(result.current.isAliveInNextGeneration({ x: 1, y: 1 })).toBe(true);
+      expect(
+        result.current.isAliveInNextGeneration({ x: 1, y: 1, living: true })
+      ).toBe(true);
     });
 
     test("a cell with more than three live neighbors dies in the next generation", () => {
@@ -73,9 +77,9 @@ describe("useGameOfLife", () => {
         result.current.setLivingAt({ x: 2, y: 3 });
       });
 
-      expect(result.current.isAliveInNextGeneration({ x: 2, y: 2 })).toBe(
-        false
-      );
+      expect(
+        result.current.isAliveInNextGeneration({ x: 2, y: 2, living: true })
+      ).toBe(false);
     });
 
     test("a dead cell with three live neighbors comes alive in the next generation", () => {
@@ -91,7 +95,9 @@ describe("useGameOfLife", () => {
         result.current.setLivingAt({ x: 1, y: 3 });
       });
 
-      expect(result.current.isAliveInNextGeneration({ x: 2, y: 2 })).toBe(true);
+      expect(
+        result.current.isAliveInNextGeneration({ x: 2, y: 2, living: false })
+      ).toBe(true);
     });
   });
 });

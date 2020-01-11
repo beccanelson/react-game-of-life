@@ -1,3 +1,8 @@
+.container {
+  background-color: #eeeeee;
+  min-height: 100vh;
+}
+
 .App {
   padding: 2rem 1rem;
   max-width: 800px;

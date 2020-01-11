@@ -1,17 +1,31 @@
 import * as React from "react";
 import _ from "lodash";
 import useGameOfLife from "./hooks/useGameOfLife";
+import { Rules } from "./types";
 
-const GRID_SIZE = 40;
-const CELL_SIZE = 15;
+const GRID_SIZE = 30;
+const CELL_SIZE = 18;
 const DELAY_MS = 200;
 
-const FILL_COLOR = "#00b5cc";
+const FILL_COLOR = "#9a12b3";
+const FILL_COLOR_LIGHT = "#bf55ec";
 const BACKGROUND = "#FFFFFF";
+
+const customRules: Rules = {
+  isLiving({ living, numberOfLivingNeighbors }) {
+    return !(numberOfLivingNeighbors < 2 || numberOfLivingNeighbors > 3);
+  }
+};
 
 const World: React.SFC = () => {
   const [running, setRunning] = React.useState(false);
-  const { cells, setLivingAt, tick, reset } = useGameOfLife(GRID_SIZE);
+  const {
+    cells,
+    setLivingAt,
+    tick,
+    reset,
+    isAliveInNextGeneration
+  } = useGameOfLife(GRID_SIZE);
 
   const gridWidth = CELL_SIZE * GRID_SIZE;
   const rows = _.times(GRID_SIZE, n => {
@@ -32,7 +46,14 @@ const World: React.SFC = () => {
         viewBox={`0 0 ${gridWidth} ${gridWidth}`}
       >
         {rows.map(row => {
-          return row.map(({ x, y, living }) => {
+          return row.map(cell => {
+            const { x, y, living } = cell;
+            let fill = BACKGROUND;
+            if (living) {
+              fill = isAliveInNextGeneration(cell)
+                ? FILL_COLOR_LIGHT
+                : FILL_COLOR;
+            }
             return (
               <rect
                 style={{ cursor: "pointer" }}
@@ -43,7 +64,7 @@ const World: React.SFC = () => {
                 width={CELL_SIZE}
                 height={CELL_SIZE}
                 key={`${x}-${y}`}
-                fill={living ? FILL_COLOR : BACKGROUND}
+                fill={fill}
                 onClick={() => {
                   setLivingAt({ x, y });
                 }}
