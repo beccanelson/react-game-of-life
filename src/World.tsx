@@ -1,7 +1,7 @@
 import * as React from "react";
-import _ from "lodash";
 import useGameOfLife from "./hooks/useGameOfLife";
 import { Rules } from "./types";
+import Cell from "./Cell";
 
 const GRID_SIZE = 30;
 const CELL_SIZE = 18;
@@ -17,26 +17,44 @@ const customRules: Rules = {
   }
 };
 
-const World: React.SFC = () => {
+type WorldProps = {
+  gridSize?: number;
+  cellSize?: number;
+};
+
+const World: React.SFC<WorldProps> = ({
+  gridSize = GRID_SIZE,
+  cellSize = CELL_SIZE
+}) => {
   const [running, setRunning] = React.useState(false);
   const {
     cells,
     setLivingAt,
     tick,
     reset,
-    isAliveInNextGeneration
-  } = useGameOfLife(GRID_SIZE);
+    isAliveInNextGeneration,
+    hasLivingCells
+  } = useGameOfLife(gridSize);
 
-  const gridWidth = CELL_SIZE * GRID_SIZE;
-  const rows = _.times(GRID_SIZE, n => {
-    return _.filter(cells, { x: n + 1 });
-  });
+  const gridWidth = cellSize * gridSize;
 
-  if (running) {
+  if (running && hasLivingCells) {
     setTimeout(() => {
       tick();
     }, DELAY_MS);
   }
+
+  const getFill = React.useCallback(
+    function(cell) {
+      const { living } = cell;
+      let fill = BACKGROUND;
+      if (living) {
+        fill = isAliveInNextGeneration(cell) ? FILL_COLOR_LIGHT : FILL_COLOR;
+      }
+      return fill;
+    },
+    [isAliveInNextGeneration]
+  );
 
   return (
     <>
@@ -45,32 +63,19 @@ const World: React.SFC = () => {
         height={gridWidth}
         viewBox={`0 0 ${gridWidth} ${gridWidth}`}
       >
-        {rows.map(row => {
-          return row.map(cell => {
-            const { x, y, living } = cell;
-            let fill = BACKGROUND;
-            if (living) {
-              fill = isAliveInNextGeneration(cell)
-                ? FILL_COLOR_LIGHT
-                : FILL_COLOR;
-            }
-            return (
-              <rect
-                style={{ cursor: "pointer" }}
-                x={x * CELL_SIZE - CELL_SIZE}
-                y={y * CELL_SIZE - CELL_SIZE}
-                stroke={"black"}
-                strokeWidth={"1px"}
-                width={CELL_SIZE}
-                height={CELL_SIZE}
-                key={`${x}-${y}`}
-                fill={fill}
-                onClick={() => {
-                  setLivingAt({ x, y });
-                }}
-              ></rect>
-            );
-          });
+        {cells.map(cell => {
+          const { x, y } = cell;
+          return (
+            <Cell
+              size={cellSize}
+              cell={cell}
+              fill={getFill(cell)}
+              key={`${x}-${y}`}
+              onClick={() => {
+                setLivingAt({ x, y });
+              }}
+            />
+          );
         })}
       </svg>
       <div>

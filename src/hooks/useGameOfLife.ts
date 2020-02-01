@@ -37,7 +37,7 @@ function useGameOfLife(gridSize: number = 10, rules = defaultRules) {
     [setCells, initialCells]
   );
 
-  const isEmpty = _.every(cells, { living: false });
+  const hasLivingCells = !_.every(cells, { living: false });
 
   const livingCells = _.filter(cells, { living: true });
 
@@ -107,7 +107,7 @@ function useGameOfLife(gridSize: number = 10, rules = defaultRules) {
     setLivingAt,
     tick,
     reset,
-    isEmpty,
+    hasLivingCells,
     isAliveAt,
     isAliveInNextGeneration
   };

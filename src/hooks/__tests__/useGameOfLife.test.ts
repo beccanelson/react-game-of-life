@@ -5,7 +5,7 @@ describe("useGameOfLife", () => {
   it("is initially empty", () => {
     const { result } = renderHook(() => useGameOfLife());
 
-    expect(result.current.isEmpty).toBe(true);
+    expect(result.current.hasLivingCells).toBe(false);
   });
 
   it("can set a living cell", () => {
@@ -15,7 +15,7 @@ describe("useGameOfLife", () => {
       result.current.setLivingAt({ x: 1, y: 1 });
     });
 
-    expect(result.current.isEmpty).toBe(false);
+    expect(result.current.hasLivingCells).toBe(true);
     expect(result.current.isAliveAt({ x: 1, y: 1 })).toBe(true);
   });
 
