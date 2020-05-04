@@ -1,6 +1,5 @@
 import * as React from "react";
 import useGameOfLife from "./hooks/useGameOfLife";
-import { Rules } from "./types";
 import Cell from "./Cell";
 
 const GRID_SIZE = 30;
@@ -11,12 +10,6 @@ const FILL_COLOR = "#9a12b3";
 const FILL_COLOR_LIGHT = "#bf55ec";
 const BACKGROUND = "#FFFFFF";
 
-const customRules: Rules = {
-  isLiving({ living, numberOfLivingNeighbors }) {
-    return !(numberOfLivingNeighbors < 2 || numberOfLivingNeighbors > 3);
-  }
-};
-
 type WorldProps = {
   gridSize?: number;
   cellSize?: number;
@@ -24,7 +17,7 @@ type WorldProps = {
 
 const World: React.SFC<WorldProps> = ({
   gridSize = GRID_SIZE,
-  cellSize = CELL_SIZE
+  cellSize = CELL_SIZE,
 }) => {
   const [running, setRunning] = React.useState(false);
   const {
@@ -33,7 +26,7 @@ const World: React.SFC<WorldProps> = ({
     tick,
     reset,
     isAliveInNextGeneration,
-    hasLivingCells
+    hasLivingCells,
   } = useGameOfLife(gridSize);
 
   const gridWidth = cellSize * gridSize;
@@ -45,7 +38,7 @@ const World: React.SFC<WorldProps> = ({
   }
 
   const getFill = React.useCallback(
-    function(cell) {
+    function (cell) {
       const { living } = cell;
       let fill = BACKGROUND;
       if (living) {
@@ -63,7 +56,7 @@ const World: React.SFC<WorldProps> = ({
         height={gridWidth}
         viewBox={`0 0 ${gridWidth} ${gridWidth}`}
       >
-        {cells.map(cell => {
+        {cells.map((cell) => {
           const { x, y } = cell;
           return (
             <Cell

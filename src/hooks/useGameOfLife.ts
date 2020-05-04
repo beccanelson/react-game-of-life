@@ -1,26 +1,12 @@
 import _ from "lodash";
 import * as React from "react";
-import { Coordinates, Cell, Rules } from "../types";
+import { Coordinates, Cell } from "../types";
 
-const defaultRules: Rules = {
-  isLiving({ living, numberOfLivingNeighbors }) {
-    if (living) {
-      return !(numberOfLivingNeighbors < 2 || numberOfLivingNeighbors > 3);
-    } else {
-      return numberOfLivingNeighbors === 3;
-    }
-  }
-};
-
-function useRules(rules: Rules) {
-  return rules;
-}
-
-function useGameOfLife(gridSize: number = 10, rules = defaultRules) {
+function useGameOfLife(gridSize: number = 10) {
   const initialCells = _.flatten(
-    _.times(gridSize, i => {
+    _.times(gridSize, (i) => {
       const x = i + 1;
-      return _.times(gridSize, i2 => {
+      return _.times(gridSize, (i2) => {
         const y = i2 + 1;
         return { x, y, living: false };
       });
@@ -28,7 +14,6 @@ function useGameOfLife(gridSize: number = 10, rules = defaultRules) {
   );
 
   const [cells, setCells] = React.useState(initialCells);
-  const { isLiving } = useRules(rules);
 
   const reset = React.useCallback(
     function reset() {
@@ -49,7 +34,7 @@ function useGameOfLife(gridSize: number = 10, rules = defaultRules) {
 
   const setCell = React.useCallback(
     function setCell({ x, y, living = false }: Cell) {
-      const updatedCells = cells.map(cell => {
+      const updatedCells = cells.map((cell) => {
         if (cell.x === x && cell.y === y) {
           return { x, y, living };
         }
@@ -82,20 +67,22 @@ function useGameOfLife(gridSize: number = 10, rules = defaultRules) {
   const isAliveInNextGeneration = React.useCallback(
     function isAliveInNextGeneration(cell: Cell) {
       const livingNeighbors = getLivingNeighbors(cell);
-      return isLiving({
-        numberOfLivingNeighbors: livingNeighbors.length,
-        living: cell.living
-      });
+      const numberOfLivingNeighbors = livingNeighbors.length;
+      if (cell.living) {
+        return !(numberOfLivingNeighbors < 2 || numberOfLivingNeighbors > 3);
+      } else {
+        return numberOfLivingNeighbors === 3;
+      }
     },
-    [getLivingNeighbors, isLiving]
+    [getLivingNeighbors]
   );
 
   const tick = React.useCallback(
     function tick() {
       setCells(
-        cells.map(cell => ({
+        cells.map((cell) => ({
           ...cell,
-          living: isAliveInNextGeneration(cell)
+          living: isAliveInNextGeneration(cell),
         }))
       );
     },
@@ -109,7 +96,7 @@ function useGameOfLife(gridSize: number = 10, rules = defaultRules) {
     reset,
     hasLivingCells,
     isAliveAt,
-    isAliveInNextGeneration
+    isAliveInNextGeneration,
   };
 }
 

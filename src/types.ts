@@ -11,7 +11,3 @@ export type CellState = {
   living: boolean;
   numberOfLivingNeighbors: number;
 };
-
-export interface Rules {
-  isLiving(state: CellState): boolean;
-}
